@@ -2,35 +2,43 @@ import { IPFSClientConfig } from '../types';
 
 export default class IPFSClient {
   static readonly IPFS_CLIENT_ERROR = 'IPFS client not initialised';
-  ipfs: any;
-  authorization: any;
+  url: string;
+  secret: string;
 
   constructor(ipfsClientConfig: IPFSClientConfig) {
-    const authorization =
-      'Basic ' + btoa(ipfsClientConfig.clientId + ':' + ipfsClientConfig.clientSecret);
-    this.authorization = authorization;
-    // ipfs-http-client is being mocked by src/__mocks__/ipfs-http-client
-    // due to the way its being imported in ipfs/index.ts, we have to add a special mock for it
-    import('ipfs-http-client').then(({ create }) => {
-      this.ipfs = create({
-        url: ipfsClientConfig.baseUrl,
-        headers: {
-          authorization,
-        },
-      });
-    });
+    this.url = ipfsClientConfig.baseUrl;
+    this.secret = ipfsClientConfig.clientSecret;
   }
 
   public async post(data: string): Promise<string> {
-    const formData = new FormData();
-    formData.append('file', new Blob([data], { type: 'application/json' }));
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append('x-api-key', this.secret as unknown as string);
 
-    if (this.ipfs) {
-      const result = await this.ipfs.add(data);
-      await this.ipfs.pin.add(result.path);
-      return result.path;
+      const formdata = new FormData();
+      formdata.append('Body', new Blob([data], { type: 'application/json' }));
+      formdata.append('Key', 'metadata');
+      formdata.append('ContentType', 'application/json');
+
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow',
+      };
+
+      const response = await fetch(
+        this.url,
+        // @ts-ignore
+        requestOptions,
+      );
+      const result: { pin?: { cid?: string } } = await response.json();
+
+      if (!result.pin?.cid) throw new Error('Error while uploading to IPFS - no cid returned');
+
+      return result.pin.cid;
+    } catch (error: any) {
+      throw new Error('Error while uploading to IPFS - post failed');
     }
-
-    throw Error('IPFS client not intiialised properly');
   }
 }

@@ -45,7 +45,6 @@ export class TalentLayerClient {
     this.graphQlClient = new GraphQLClient(getGraphQLConfig(config.chainId));
     this.ipfsClient = new IPFSClient({
       baseUrl: config.ipfsConfig.baseUrl,
-      clientId: config.ipfsConfig.clientId,
       clientSecret: config.ipfsConfig.clientSecret,
     });
     this.viemClient = new ViemClient(config.chainId, config.walletConfig || {}, this.logger);
@@ -55,9 +54,14 @@ export class TalentLayerClient {
     // DEV mode overrides
     if (config.customConfig) {
       this.customConfig = config?.customConfig;
-      this.chainId = config.customConfig.chainConfig.id
+      this.chainId = config.customConfig.chainConfig.id;
       this.graphQlClient = new GraphQLClient(getGraphQLConfig(config.customConfig.chainConfig.id));
-      this.viemClient = new ViemClient(config.customConfig.chainConfig.id, config.walletConfig || {}, this.logger, this.customConfig);
+      this.viemClient = new ViemClient(
+        config.customConfig.chainConfig.id,
+        config.walletConfig || {},
+        this.logger,
+        this.customConfig,
+      );
     }
   }
 
@@ -77,7 +81,14 @@ export class TalentLayerClient {
    */
   // @ts-ignore
   get erc20(): IERC20 {
-    return new ERC20(this.ipfsClient, this.viemClient, this.platformID, this.chainId, this.logger, this.customConfig);
+    return new ERC20(
+      this.ipfsClient,
+      this.viemClient,
+      this.platformID,
+      this.chainId,
+      this.logger,
+      this.customConfig,
+    );
   }
 
   /**
@@ -103,7 +114,13 @@ export class TalentLayerClient {
    */
   // @ts-ignore
   get platform(): IPlatform {
-    return new Platform(this.graphQlClient, this.viemClient, this.platformID, this.ipfsClient, this.logger);
+    return new Platform(
+      this.graphQlClient,
+      this.viemClient,
+      this.platformID,
+      this.ipfsClient,
+      this.logger,
+    );
   }
 
   /**
@@ -112,7 +129,13 @@ export class TalentLayerClient {
    */
   // @ts-ignore
   get disputes(): IDispute {
-    return new Disputes(this.viemClient, this.platformID, this.graphQlClient, this.chainId, this.logger);
+    return new Disputes(
+      this.viemClient,
+      this.platformID,
+      this.graphQlClient,
+      this.chainId,
+      this.logger,
+    );
   }
 
   /**
@@ -138,7 +161,13 @@ export class TalentLayerClient {
    */
   // @ts-ignore
   get profile(): IProfile {
-    return new Profile(this.graphQlClient, this.ipfsClient, this.viemClient, this.platformID, this.logger);
+    return new Profile(
+      this.graphQlClient,
+      this.ipfsClient,
+      this.viemClient,
+      this.platformID,
+      this.logger,
+    );
   }
 
   /**
@@ -147,7 +176,13 @@ export class TalentLayerClient {
    */
   // @ts-ignore
   get review(): IReview {
-    return new Review(this.graphQlClient, this.ipfsClient, this.viemClient, this.platformID, this.logger);
+    return new Review(
+      this.graphQlClient,
+      this.ipfsClient,
+      this.viemClient,
+      this.platformID,
+      this.logger,
+    );
   }
 
   /**
@@ -162,7 +197,7 @@ export class TalentLayerClient {
       this.viemClient,
       this.platformID,
       this.chainId,
-      this.logger
+      this.logger,
     );
   }
 }

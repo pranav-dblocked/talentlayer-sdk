@@ -12,7 +12,7 @@ export enum NetworkEnum {
   MUMBAI = 80001,
   IEXEC = 134,
   POLYGON = 137,
-  LOCAL = 1
+  LOCAL = 1,
 }
 
 export enum RateToken {
@@ -35,7 +35,6 @@ export type GraphQLConfig = {
 export type GraphQLQuery = string;
 
 export type IPFSClientConfig = {
-  clientId: string;
   clientSecret: string;
   baseUrl: string;
 };
@@ -52,23 +51,22 @@ type Currency = {
   decimals: number;
   name: string;
   symbol: string;
-}
+};
 
 export type chainConfig = Chain;
 
 /**
  * Represents a custom config that can be passed to the sdk during initialisation of the client
  * Typically, it should bne used in order to use the sdk with a custom chain and contracts
- * 
+ *
  * @property {chainConfig} chainConfig - The config of the custom chain that the sdk is being used for
  * @property {Config} contractConfig - The custom contracts to be used with the sdk
  */
 
 export type CustomConfig = {
-  chainConfig: chainConfig,
-  contractConfig: Config
-
-}
+  chainConfig: chainConfig;
+  contractConfig: Config;
+};
 
 export type TalentLayerClientConfig = {
   chainId: NetworkEnum;
@@ -77,13 +75,13 @@ export type TalentLayerClientConfig = {
   platformId: number;
   signatureApiUrl?: string;
   customConfig?: CustomConfig;
-  debug?: Boolean
+  debug?: Boolean;
 };
 
 /**
  * Represents the response of a transaction made through the client.
  * This type is typically used to encapsulate details of blockchain transactions initiated by the client.
- * 
+ *
  * @property {Hash} tx - The transaction hash that uniquely identifies the transaction on the blockchain.
  * @property {string} cid - The Content Identifier (CID) referring to the location of the transaction-related data stored on IPFS.
  */

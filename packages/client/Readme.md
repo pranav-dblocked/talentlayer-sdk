@@ -12,9 +12,8 @@ To get started with the TalentLayer SDK in a browser environment, you'll first n
 
 1. Ensure you have the necessary environment variables set up. These include:
 
-`INFURA_PROJECT_ID
-INFURA_SECRET
-INFURA_IPFS_BASE_URL
+`IPFS_SECRET
+IPFS_WRITE_URL
 TALENT_LAYER_PLATFORM_ID
 PUBLIC_SIGNATURE_API_URL`
 
@@ -32,9 +31,8 @@ import { TalentLayerClient } from '@talentLayer/client'; // Adjust the import ba
 const client = new TalentLayerClient({
   chainId: YOUR_CHAIN_ID, // Replace with your chain ID
   ipfsConfig: {
-    clientId: process.env.INFURA_PROJECT_ID,
-    clientSecret: process.env.INFURA_SECRET,
-    baseUrl: process.env.INFURA_IPFS_BASE_URL,
+    clientSecret: process.env.IPFS_SECRET,
+    baseUrl: process.env.IPFS_WRITE_URL,
   },
   platformId: parseInt(process.env.TALENT_LAYER_PLATFORM_ID),
   signatureApiUrl: process.env.PUBLIC_SIGNATURE_API_URL,
@@ -45,7 +43,7 @@ const client = new TalentLayerClient({
 
 > `PUBLIC_SIGNATURE_API_URL` is an optional property. It can be omitted. For understanding how it works, refer to its usage in the starter-kit: https://github.com/TalentLayer-Labs/starter-kit
 
-> You can get your infura client id, secret and base url from infura's official website by setting up a new project
+> For ipfs, you can get your ecret and base url from quicknode's official website by setting up a new project
 
 ### NodeJs (backend)
 
@@ -55,9 +53,8 @@ For backend applications, the TalentLayer SDK can be initialized similarly to th
 
 As with the browser setup, ensure you have the necessary environment variables:
 
-`INFURA_PROJECT_ID
-INFURA_SECRET
-INFURA_IPFS_BASE_URL
+`IPFS_SECRET
+IPFS_WRITE_URL
 TALENT_LAYER_PLATFORM_ID
 PUBLIC_SIGNATURE_API_URL`
 
@@ -71,9 +68,8 @@ import { TalentLayerClient } from '@talentLayer/client'; // Adjust the import ba
 const client = new TalentLayerClient({
   chainId: YOUR_CHAIN_ID, // Replace with your chain ID
   ipfsConfig: {
-    clientId: process.env.INFURA_PROJECT_ID,
-    clientSecret: process.env.INFURA_SECRET,
-    baseUrl: process.env.INFURA_IPFS_BASE_URL,
+    clientSecret: process.env.IPFS_SECRET,
+    baseUrl: process.env.IPFS_WRITE_URL,
   },
   platformId: parseInt(process.env.TALENT_LAYER_PLATFORM_ID),
   signatureApiUrl: process.env.PUBLIC_SIGNATURE_API_URL,
