@@ -36,8 +36,7 @@ describe('TalentLayerClient', () => {
         });
         const chainId = 137;
         const ipfsConfig = {
-            clientId: 'abcd',
-            clientSecret: 'abcde',
+            apiKey: 'abcd',
             baseUrl: 'www.example.com'
         }
         const viemConfig = {};
@@ -97,8 +96,7 @@ describe('TalentLayerClient:dev', () => {
         });
         const chainId = 137;
         const ipfsConfig = {
-            clientId: 'abcd',
-            clientSecret: 'abcde',
+            apiKey: 'abcd',
             baseUrl: 'www.example.com'
         }
         const viemConfig = {};

@@ -35,8 +35,7 @@ export type GraphQLConfig = {
 export type GraphQLQuery = string;
 
 export type IPFSClientConfig = {
-  clientId: string;
-  clientSecret: string;
+  apiKey: string;
   baseUrl: string;
 };
 

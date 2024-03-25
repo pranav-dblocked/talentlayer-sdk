@@ -45,8 +45,7 @@ export class TalentLayerClient {
     this.graphQlClient = new GraphQLClient(getGraphQLConfig(config.chainId));
     this.ipfsClient = new IPFSClient({
       baseUrl: config.ipfsConfig.baseUrl,
-      clientId: config.ipfsConfig.clientId,
-      clientSecret: config.ipfsConfig.clientSecret,
+      apiKey: config.ipfsConfig.apiKey,
     });
     this.viemClient = new ViemClient(config.chainId, config.walletConfig || {}, this.logger);
     this.chainId = config.chainId;

@@ -1,30 +1,31 @@
 import IPFSClient from "..";
 import { IPFSClientConfig } from "../../types";
 
-jest.mock('axios')
-jest.mock('ipfs-http-client', () => ({
-    create: jest.fn().mockImplementation(() => ({
-        add: jest.fn().mockResolvedValue({ path: '0xracoon' }), // Mocking the add method of IPFS client
-        pin: { add: jest.fn().mockResolvedValue({ path: '0xRacoon' }) }
-    })),
-}));
+// Mock axios and fetch globally
+jest.mock('axios');
+global.fetch = jest.fn();
 
 describe('IPFSClient', () => {
     let ipfsClientConfig: IPFSClientConfig;
     let ipfsClient: IPFSClient;
 
     beforeEach(() => {
-        ipfsClientConfig = { clientId: 'clientId', clientSecret: 'clientSecret', baseUrl: 'baseUrl' };
+        ipfsClientConfig = { apiKey: 'apiKey', baseUrl: 'baseUrl' };
         ipfsClient = new IPFSClient(ipfsClientConfig);
     });
 
     describe('post', () => {
         test('should post data successfully', async () => {
+            // Mock fetch to return a resolved promise with a successful response
+            (global.fetch as jest.Mock).mockResolvedValue({
+                ok: true,
+                text: () => Promise.resolve('0xracoon')
+            });
+
             // Arrange
             const data = 'someData';
 
             // Act
-            console.log(ipfsClient)
             const result = await ipfsClient.post(data);
 
             // Assert
@@ -32,13 +33,18 @@ describe('IPFSClient', () => {
         });
 
         test('should throw an error if the IPFS client is not initialized', async () => {
+            // Mock fetch to return a rejected promise with HTTP error 401
+            (global.fetch as jest.Mock).mockRejectedValue(new Error('Unauthorized'));
+
             // Arrange
             const data = 'someData';
-            ipfsClient.ipfs = null;  // Simulating an uninitialized IPFS client
-
+            // Set ipfsClient's ipfs property to null to simulate an uninitialized state
+            ipfsClient.ipfs = null;
+        
             // Act & Assert
-            await expect(ipfsClient.post(data)).rejects.toThrow('IPFS client not intiialised properly');
+            await expect(ipfsClient.post(data)).rejects.toThrow('IPFS client not initialised properly');
         });
+        
     });
 
     // Additional tests as needed...
