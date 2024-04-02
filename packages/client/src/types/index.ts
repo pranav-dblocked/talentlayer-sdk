@@ -35,8 +35,11 @@ export type GraphQLConfig = {
 export type GraphQLQuery = string;
 
 export type IPFSClientConfig = {
-  apiKey: string;
-  baseUrl: string;
+  provider: 'quicknode' | 'infura'; 
+  apiKey?: string; 
+  baseUrl: string; 
+  clientId?: string; 
+  clientSecret?: string; 
 };
 
 export type ViemClientConfig = {

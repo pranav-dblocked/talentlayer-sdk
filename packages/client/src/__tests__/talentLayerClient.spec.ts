@@ -8,7 +8,7 @@ import { Profile } from '../profile';
 import { Proposal } from '../proposals';
 import { Review } from '../reviews';
 import { Service } from '../services';
-import { CustomConfig, NetworkEnum } from '../types';
+import { CustomConfig, NetworkEnum, IPFSClientConfig } from '../types';
 import { testPlatformId } from '../__mocks__/fixtures';
 import TalentLayerID from '../contracts/ABI/TalentLayerID.json';
 import TalerLayerService from '../contracts/ABI/TalentLayerService.json';
@@ -29,57 +29,99 @@ jest.mock('ipfs-http-client', () => ({
 }));
 
 describe('TalentLayerClient', () => {
-    let client: any;
+    let clientQuicknode: any;
+    let clientInfura: any;
 
     beforeEach(() => {
         Object.defineProperty(globalThis, 'window', {
         });
         const chainId = 137;
-        const ipfsConfig = {
-            apiKey: 'abcd',
-            baseUrl: 'www.example.com'
-        }
+        const quicknodeConfig: IPFSClientConfig = {
+            provider: 'quicknode',
+            apiKey: 'your_quicknode_api_key',
+            baseUrl: 'www.quicknode.com'
+        };
+        const infuraConfig: IPFSClientConfig = {
+            provider: 'infura',
+            clientId: 'your_infura_client_id',
+            clientSecret: 'your_infura_client_secret',
+            baseUrl: 'https://ipfs.infura.io:5001/api/v0'
+        };
+        
         const viemConfig = {};
         const platformID = testPlatformId;
         const signatureApiUrl = 'www.example.com';
-        client = new TalentLayerClient({
+        
+        clientQuicknode = new TalentLayerClient({
             chainId: chainId,
-            ipfsConfig: ipfsConfig,
+            ipfsConfig: quicknodeConfig,
             platformId: testPlatformId,
             signatureApiUrl: signatureApiUrl,
             debug: false
-        })
+        });
+        clientInfura = new TalentLayerClient({
+            chainId: chainId,
+            ipfsConfig: infuraConfig,
+            platformId: testPlatformId,
+            signatureApiUrl: signatureApiUrl,
+            debug: false
+        });
 
 
     })
 
     describe('constructor', () => {
-        it('should be initialised successfully', async () => {
-            expect(client).toBeDefined()
+        it('should be initialised successfully (Quicknode)', async () => {
+            expect(clientQuicknode).toBeDefined()
+
+        })
+
+        it('should be initialised successfully (Infura)', async () => {
+            expect(clientInfura).toBeDefined()
 
         })
     })
 
     describe('getters', () => {
-        it('should return all domain specific getters', async () => {
-            expect(client.platform).toBeInstanceOf(Platform)
-            expect(client.erc20).toBeInstanceOf(ERC20)
-            expect(client.proposal).toBeInstanceOf(Proposal)
-            expect(client.disputes).toBeInstanceOf(Disputes)
-            expect(client.service).toBeInstanceOf(Service)
-            expect(client.profile).toBeInstanceOf(Profile)
-            expect(client.escrow).toBeInstanceOf(Escrow)
-            expect(client.review).toBeInstanceOf(Review)
+        it('should return all domain specific getters  (Quicknode)', async () => {
+            expect(clientQuicknode.platform).toBeInstanceOf(Platform)
+            expect(clientQuicknode.erc20).toBeInstanceOf(ERC20)
+            expect(clientQuicknode.proposal).toBeInstanceOf(Proposal)
+            expect(clientQuicknode.disputes).toBeInstanceOf(Disputes)
+            expect(clientQuicknode.service).toBeInstanceOf(Service)
+            expect(clientQuicknode.profile).toBeInstanceOf(Profile)
+            expect(clientQuicknode.escrow).toBeInstanceOf(Escrow)
+            expect(clientQuicknode.review).toBeInstanceOf(Review)
+        })
+        it('should return all domain specific getters (Infura)', async () => {
+            expect(clientInfura.platform).toBeInstanceOf(Platform)
+            expect(clientInfura.erc20).toBeInstanceOf(ERC20)
+            expect(clientInfura.proposal).toBeInstanceOf(Proposal)
+            expect(clientInfura.disputes).toBeInstanceOf(Disputes)
+            expect(clientInfura.service).toBeInstanceOf(Service)
+            expect(clientInfura.profile).toBeInstanceOf(Profile)
+            expect(clientInfura.escrow).toBeInstanceOf(Escrow)
+            expect(clientInfura.review).toBeInstanceOf(Review)
         })
     })
 
     describe('getChainConfig', () => {
-        it('should return the chain config based on the network id passed', () => {
+        it('should return the chain config based on the network id passed (Quicknode)', () => {
             // Arrange
             const networkId = NetworkEnum.MUMBAI
 
             // Act
-            const config = client.getChainConfig(networkId);
+            const config = clientQuicknode.getChainConfig(networkId);
+
+            // Assert
+            expect(config).toEqual(getChainConfig(networkId));
+        })
+        it('should return the chain config based on the network id passed (Infura)', () => {
+            // Arrange
+            const networkId = NetworkEnum.MUMBAI
+
+            // Act
+            const config = clientInfura.getChainConfig(networkId);
 
             // Assert
             expect(config).toEqual(getChainConfig(networkId));
@@ -89,16 +131,24 @@ describe('TalentLayerClient', () => {
 
 
 describe('TalentLayerClient:dev', () => {
-    let client: any;
+    let clientQuicknode: any;
+    let clientInfura: any;
 
     beforeEach(() => {
         Object.defineProperty(globalThis, 'window', {
         });
         const chainId = 137;
-        const ipfsConfig = {
-            apiKey: 'abcd',
-            baseUrl: 'www.example.com'
-        }
+        const quicknodeConfig: IPFSClientConfig = {
+            provider: 'quicknode',
+            apiKey: 'your_quicknode_api_key',
+            baseUrl: 'www.quicknode.com'
+        };
+        const infuraConfig: IPFSClientConfig = {
+            provider: 'infura',
+            clientId: 'your_infura_client_id',
+            clientSecret: 'your_infura_client_secret',
+            baseUrl: 'https://ipfs.infura.io:5001/api/v0'
+        };
         const viemConfig = {};
         const platformID = testPlatformId;
         const signatureApiUrl = 'www.example.com';
@@ -176,9 +226,16 @@ describe('TalentLayerClient:dev', () => {
             }
         }
 
-        client = new TalentLayerClient({
+        clientQuicknode = new TalentLayerClient({
             chainId: chainId,
-            ipfsConfig: ipfsConfig,
+            ipfsConfig: quicknodeConfig,
+            platformId: testPlatformId,
+            signatureApiUrl: signatureApiUrl,
+            customConfig: customConfig
+        })
+        clientInfura = new TalentLayerClient({
+            chainId: chainId,
+            ipfsConfig: infuraConfig,
             platformId: testPlatformId,
             signatureApiUrl: signatureApiUrl,
             customConfig: customConfig
@@ -186,35 +243,60 @@ describe('TalentLayerClient:dev', () => {
     })
 
     describe('constructor', () => {
-        it('should be initialised successfully', async () => {
-            expect(client).toBeDefined()
+        it('should be initialised successfully (Quicknode)', async () => {
+            expect(clientQuicknode).toBeDefined()
+
+        })
+        it('should be initialised successfully (Infura)', async () => {
+            expect(clientInfura).toBeDefined()
 
         })
     })
 
     describe('getters', () => {
-        it('should return all domain specific getters', async () => {
-            expect(client.platform).toBeInstanceOf(Platform)
-            expect(client.erc20).toBeInstanceOf(ERC20)
-            expect(client.proposal).toBeInstanceOf(Proposal)
-            expect(client.disputes).toBeInstanceOf(Disputes)
-            expect(client.service).toBeInstanceOf(Service)
-            expect(client.profile).toBeInstanceOf(Profile)
-            expect(client.escrow).toBeInstanceOf(Escrow)
-            expect(client.review).toBeInstanceOf(Review)
+        it('should return all domain specific getters (Quicknode)', async () => {
+            expect(clientQuicknode.platform).toBeInstanceOf(Platform)
+            expect(clientQuicknode.erc20).toBeInstanceOf(ERC20)
+            expect(clientQuicknode.proposal).toBeInstanceOf(Proposal)
+            expect(clientQuicknode.disputes).toBeInstanceOf(Disputes)
+            expect(clientQuicknode.service).toBeInstanceOf(Service)
+            expect(clientQuicknode.profile).toBeInstanceOf(Profile)
+            expect(clientQuicknode.escrow).toBeInstanceOf(Escrow)
+            expect(clientQuicknode.review).toBeInstanceOf(Review)
+        })
+
+        it('should return all domain specific getters (Infura)', async () => {
+            expect(clientInfura.platform).toBeInstanceOf(Platform)
+            expect(clientInfura.erc20).toBeInstanceOf(ERC20)
+            expect(clientInfura.proposal).toBeInstanceOf(Proposal)
+            expect(clientInfura.disputes).toBeInstanceOf(Disputes)
+            expect(clientInfura.service).toBeInstanceOf(Service)
+            expect(clientInfura.profile).toBeInstanceOf(Profile)
+            expect(clientInfura.escrow).toBeInstanceOf(Escrow)
+            expect(clientInfura.review).toBeInstanceOf(Review)
         })
     })
 
     describe('getChainConfig', () => {
-        it('should return the chain config irrespective of the network id passed', () => {
+        it('should return the chain config irrespective of the network id passed (Quicknode)', () => {
             // Arrange
             const networkId = NetworkEnum.MUMBAI
 
             // Act
-            const config = client.getChainConfig(networkId);
+            const config = clientQuicknode.getChainConfig(networkId);
 
             // Assert
-            expect(config).toEqual(client.customConfig.contractConfig);
+            expect(config).toEqual(clientQuicknode.customConfig.contractConfig);
+        })
+        it('should return the chain config irrespective of the network id passed (Infura)', () => {
+            // Arrange
+            const networkId = NetworkEnum.MUMBAI
+
+            // Act
+            const config = clientInfura.getChainConfig(networkId);
+
+            // Assert
+            expect(config).toEqual(clientInfura.customConfig.contractConfig);
         })
     })
 })
