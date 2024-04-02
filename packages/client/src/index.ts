@@ -43,22 +43,32 @@ export class TalentLayerClient {
     this.logger.info('Client Initialising', config);
     this.platformID = config.platformId;
     this.graphQlClient = new GraphQLClient(getGraphQLConfig(config.chainId));
-    if (config.ipfsConfig.provider === 'quicknode') {
-      this.ipfsClient = new IPFSClient({
-        provider: config.ipfsConfig.provider, 
-        baseUrl: config.ipfsConfig.baseUrl,
-        apiKey: config.ipfsConfig.apiKey,
-      });
-    } else if (config.ipfsConfig.provider === 'infura') {
-      this.ipfsClient = new IPFSClient({
-        provider: config.ipfsConfig.provider, 
-        baseUrl: config.ipfsConfig.baseUrl,
-        clientId: config.ipfsConfig.clientId,
-        clientSecret: config.ipfsConfig.clientSecret,
-      });
-    } else {
-      throw new Error('Unsupported IPFS provider or IPFS provider not defined.');
-    }    
+    switch (config.ipfsConfig.provider) {
+      case 'quicknode':
+        this.ipfsClient = new IPFSClient({
+          provider: config.ipfsConfig.provider,
+          baseUrl: config.ipfsConfig.baseUrl,
+          apiKey: config.ipfsConfig.apiKey,
+        });
+        break;
+      case 'infura':
+        this.ipfsClient = new IPFSClient({
+          provider: config.ipfsConfig.provider,
+          baseUrl: config.ipfsConfig.baseUrl,
+          clientId: config.ipfsConfig.clientId,
+          clientSecret: config.ipfsConfig.clientSecret,
+        });
+        break;
+      default:
+        // Assume Infura if no provider is defined
+        this.ipfsClient = new IPFSClient({
+          provider: 'infura',
+          baseUrl: config.ipfsConfig.baseUrl,
+          clientId: config.ipfsConfig.clientId,
+          clientSecret: config.ipfsConfig.clientSecret,
+        });
+        break;
+    }
     this.viemClient = new ViemClient(config.chainId, config.walletConfig || {}, this.logger);
     this.chainId = config.chainId;
     this.signatureApiUrl = config?.signatureApiUrl;

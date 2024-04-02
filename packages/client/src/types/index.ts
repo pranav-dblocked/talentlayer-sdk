@@ -35,7 +35,7 @@ export type GraphQLConfig = {
 export type GraphQLQuery = string;
 
 export type IPFSClientConfig = {
-  provider: 'quicknode' | 'infura'; 
+  provider?: 'quicknode' | 'infura'; 
   apiKey?: string; 
   baseUrl: string; 
   clientId?: string; 
