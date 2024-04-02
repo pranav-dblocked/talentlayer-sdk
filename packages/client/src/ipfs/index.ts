@@ -40,25 +40,10 @@ export default class IPFSClient {
         myHeaders.append("x-api-key", this.authorization);
         myHeaders.append("Content-Type", "application/json");
 
-        const raw = JSON.stringify({
-          "cid": data, // Assuming data already contains the CID
-          "name": "image.png",
-          "origins": [
-            "/ip4/123.12.113.142/tcp/4001/p2p/SourcePeerId",
-            "/ip4/123.12.113.114/udp/4001/quic/p2p/SourcePeerId"
-          ],
-          "meta": {
-            "test": "mycooltest",
-            "morevalue": {
-              "location": "/home"
-            }
-          }
-        });
-
         const requestOptions = {
           method: 'POST',
           headers: myHeaders,
-          body: raw,
+          body: data,
           redirect: 'follow' as RequestRedirect
         };
 
