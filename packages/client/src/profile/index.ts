@@ -105,6 +105,7 @@ export class Profile {
   /**
  * create - Creates a new user profile by minting it on the TalentLayerId contract. This function is typically called when a new user registers and a profile needs to be created in the system.
  * @param {string} handle - The user handle or username for the new profile.
+ * @param {number} platformId - The platform ID where the profile is created. (optional)
  * @returns {Promise<Hash>} - A promise that resolves to the transaction hash once the profile creation transaction is completed.
  */
   public async create(handle: string, platformId?: number): Promise<Hash> {
