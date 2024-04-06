@@ -45,6 +45,7 @@ export class Disputes {
 
   /**
  * getArbitrationCost - Retrieves the current cost of arbitration. This function is useful for understanding the financial implications of initiating an arbitration process.
+ * @param {number} platformId - The platform ID where the arbitration cost is to be retrieved. (Optional)
  * @returns {Promise<any>} - Returns a Promise that resolves to the arbitration cost, typically in a numerical or string format representing the cost value.
  */
   public async getArbitrationCost(platformId?: number): Promise<any> {
@@ -81,6 +82,7 @@ export class Disputes {
   /**
  * setPrice - Sets the price of arbitration. This function allows for modifying the arbitration cost for the current platform
  * @param {number | string} value - The new price value for arbitration, which can be specified as a number or a string representing the price.
+ * @param {number} platformId - The platform ID where the price of arbitration is set. (optional)
  * @returns {Promise<Hash>} - A promise that resolves to the transaction hash of the set operation.
  */
   public async setPrice(value: number | string, platformId?: number): Promise<Hash> {

@@ -112,6 +112,7 @@ export class Proposal {
  * @param {string} rateToken - The address of the token used for setting the rate.
  * @param {string} rateAmount - The amount/rate for which the proposal is being created
  * @param {string} expirationDate - The expiration date of the proposal.
+ * @param {number} platformId - The platform ID where the proposal is to be created. (optional)
  * @returns {Promise<ClientTransactionResponse>} - A promise that resolves to the transaction response for the proposal creation {cid and txHash}.
  */
   public async create(
