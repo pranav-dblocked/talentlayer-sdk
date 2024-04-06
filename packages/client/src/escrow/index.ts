@@ -56,12 +56,14 @@ export class Escrow {
     serviceId: string,
     proposalId: string,
     metaEvidenceCid: string,
+    platformId?: number
   ): Promise<ClientTransactionResponse> {
+    const platformID = platformId || this.platformID;
     const proposalInstance = new Proposal(
       this.graphQlClient,
       this.ipfsClient,
       this.viemClient,
-      this.platformID,
+      platformID,
       this.logger
     );
     const proposal = await proposalInstance.getOne(proposalId);
@@ -154,12 +156,13 @@ export class Escrow {
     throw new Error('Error creating Transaction');
   }
 
-  public async release(serviceId: string, amount: bigint, userId: number): Promise<any> {
+  public async release(serviceId: string, amount: bigint, userId: number, platformId?: number): Promise<any> {
+    const platformID = platformId || this.platformID;
     const serviceInstance = new Service(
       this.graphQlClient,
       this.ipfsClient,
       this.viemClient,
-      this.platformID,
+      platformID,
       this.logger
     );
     const service = await serviceInstance.getOne(serviceId);
@@ -182,12 +185,13 @@ export class Escrow {
     return tx;
   }
 
-  public async reimburse(serviceId: string, amount: bigint, userId: number): Promise<any> {
+  public async reimburse(serviceId: string, amount: bigint, userId: number, platformId?: number): Promise<any> {
+    const platformID = platformId || this.platformID;
     const serviceInstance = new Service(
       this.graphQlClient,
       this.ipfsClient,
       this.viemClient,
-      this.platformID,
+      platformID,
       this.logger
     );
     const service = await serviceInstance.getOne(serviceId);

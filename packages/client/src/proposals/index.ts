@@ -121,7 +121,9 @@ export class Proposal {
     rateToken: string,
     rateAmount: string,
     expirationDate: string,
+    platformId?: number,
   ): Promise<ClientTransactionResponse> {
+    const platformID = platformId || this.platformID;
     const cid = await this.upload(proposalDetails);
     const signature = await this.getSignature({
       profileId: Number(userId),
@@ -132,19 +134,19 @@ export class Proposal {
     const platform = new Platform(
       this.graphQlClient,
       this.viemClient,
-      this.platformID,
+      platformID,
       this.ipfsClient,
       this.logger
     );
 
-    const platformDetails = await platform.getOne(this.platformID.toString());
+    const platformDetails = await platform.getOne(platformID.toString());
 
     const proposalPostingFees = BigInt(platformDetails?.proposalPostingFee || '0');
 
     const tx = await this.viemClient.writeContract(
       'talentLayerService',
       'createProposal',
-      [userId, serviceId, rateToken, rateAmount, this.platformID, cid, expirationDate, signature],
+      [userId, serviceId, rateToken, rateAmount, platformID, cid, expirationDate, signature],
       proposalPostingFees,
     );
 
