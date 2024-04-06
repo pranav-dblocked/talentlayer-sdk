@@ -47,8 +47,9 @@ export class Disputes {
  * getArbitrationCost - Retrieves the current cost of arbitration. This function is useful for understanding the financial implications of initiating an arbitration process.
  * @returns {Promise<any>} - Returns a Promise that resolves to the arbitration cost, typically in a numerical or string format representing the cost value.
  */
-  public async getArbitrationCost(): Promise<any> {
-    const platformResponse = await this.subgraph.get(getPlatformById(this.platformID.toString()));
+  public async getArbitrationCost(platformId?: number): Promise<any> {
+    const platformID = platformId || this.platformID;
+    const platformResponse = await this.subgraph.get(getPlatformById(platformID.toString()));
 
     if (!platformResponse?.data?.platform) {
       throw new Error('Platform not found');
@@ -73,7 +74,7 @@ export class Disputes {
       address: arbitrator,
       abi: contract.abi,
       functionName: 'arbitrationCost',
-      args: [toHex(this.platformID, { size: 32 })],
+      args: [toHex(platformID, { size: 32 })],
     });
   }
 
@@ -82,12 +83,13 @@ export class Disputes {
  * @param {number | string} value - The new price value for arbitration, which can be specified as a number or a string representing the price.
  * @returns {Promise<Hash>} - A promise that resolves to the transaction hash of the set operation.
  */
-  public async setPrice(value: number | string): Promise<Hash> {
+  public async setPrice(value: number | string, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const transformedPrice = parseEther(value.toString());
     this.logger.debug(`Setting arbitration price to ${transformedPrice}`);
 
     const tx = await this.wallet.writeContract('talentLayerArbitrator', 'setArbitrationPrice', [
-      this.platformID,
+      platformID,
       transformedPrice,
     ]);
 

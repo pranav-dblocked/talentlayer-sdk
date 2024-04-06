@@ -107,7 +107,8 @@ export class Profile {
  * @param {string} handle - The user handle or username for the new profile.
  * @returns {Promise<Hash>} - A promise that resolves to the transaction hash once the profile creation transaction is completed.
  */
-  public async create(handle: string): Promise<Hash> {
+  public async create(handle: string, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformId;
     const proposolResponse = await this.graphQlClient.get(getProtocolById(1));
 
     const protocol = proposolResponse?.data?.protocol;
@@ -124,7 +125,7 @@ export class Profile {
     return this.viemClient.writeContract(
       'talentLayerId',
       'mint',
-      [this.platformId.toString(), handle],
+      [platformID.toString(), handle],
       BigInt(fee),
     );
   }
