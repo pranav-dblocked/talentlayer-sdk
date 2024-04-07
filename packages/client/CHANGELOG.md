@@ -1,5 +1,11 @@
 # @talentlayer/client
 
+## 0.1.16
+
+### Patch Changes
+
+- PlatformID can be override individually on each function
+
 ## 0.1.15
 
 ### Patch Changes
