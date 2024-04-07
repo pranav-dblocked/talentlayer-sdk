@@ -1,5 +1,11 @@
 # @talentlayer/client
 
+## 0.1.15
+
+### Patch Changes
+
+- switch ipfs post from infura to quicknode
+
 ## 0.1.14
 
 ### Patch Changes
