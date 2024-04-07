@@ -91,14 +91,16 @@ export class Platform {
  * Updates the platform details on the blockchain using the provided data.
  *
  * @param {PlatformDetails} data - The new platform details to be updated.
+ * @param {number} platformId - The platform ID where the platform details are updated. (optional)
  * @returns {Promise<ClientTransactionResponse>} A promise that resolves to the transaction response of the update operation.
  */
-  public async update(data: PlatformDetails): Promise<ClientTransactionResponse> {
+  public async update(data: PlatformDetails, platformId?: number): Promise<ClientTransactionResponse> {
+    const platformID = platformId || this.platformID;
     this.logger.debug('updating platform details');
     const cid = await this.upload(data);
     this.logger.debug('platform details uploaded to ipfs', cid);
     const tx = await this.wallet.writeContract('talentLayerPlatformId', 'updateProfileData', [
-      this.platformID,
+      platformID,
       cid,
     ]);
 
@@ -117,9 +119,9 @@ export class Platform {
    */
   public async mint(platformName: string): Promise<Hash> {
     const tx = await this.wallet.writeContract(
-        'talentLayerPlatformId',
-        'mint',
-        [platformName],
+      'talentLayerPlatformId',
+      'mint',
+      [platformName],
     );
 
     return tx;
@@ -129,13 +131,15 @@ export class Platform {
  * Sets the fee timeout for the platform.
  * 
  * @param {number} timeout - The timeout value in seconds.
+ * @param {number} platformId - The platform ID where the fee timeout is set. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async setFeeTimeout(timeout: number): Promise<Hash> {
+  public async setFeeTimeout(timeout: number, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const tx = await this.wallet.writeContract(
       'talentLayerPlatformId',
       'updateArbitrationFeeTimeout',
-      [this.platformID, timeout],
+      [platformID, timeout],
     );
 
     return tx;
@@ -163,9 +167,11 @@ export class Platform {
  * Throws an error if the provided address is not an allowed arbitrator.
  * 
  * @param {Hash} address - The new arbitrator's address.
+ * @param {number} platformId - The platform ID where the arbitrator address is updated. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async updateArbitrator(address: Hash): Promise<Hash> {
+  public async updateArbitrator(address: Hash, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const allowedArbitrators: Arbitrator[] = this.getArbitrators(this.wallet.chainId);
 
     const allowedArbitratorAddresses = allowedArbitrators.map((_arbitrator: Arbitrator) =>
@@ -177,7 +183,7 @@ export class Platform {
     }
 
     const tx = await this.wallet.writeContract('talentLayerPlatformId', 'updateArbitrator', [
-      this.platformID,
+      platformID,
       address,
       '',
     ]);
@@ -191,16 +197,18 @@ export class Platform {
  * Updates the service fee rate for origin services on the platform.
  * 
  * @param {number} value - The new fee rate as a percentage ( if you want to set the fees to 5%, pass in 5).
+ * @param {number} platformId - The platform ID where the service fee rate is updated. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async updateOriginServiceFeeRate(value: number): Promise<Hash> {
+  public async updateOriginServiceFeeRate(value: number, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const transformedFeeRate = Math.round((Number(value) * FEE_RATE_DIVIDER) / 100);
 
-    this.logger.info(`updating service fee rate for platform id: ${this.platformID} to ${transformedFeeRate}`);
+    this.logger.info(`updating service fee rate for platform id: ${platformID} to ${transformedFeeRate}`);
     const tx = await this.wallet.writeContract(
       'talentLayerPlatformId',
       'updateOriginServiceFeeRate',
-      [this.platformID, transformedFeeRate],
+      [platformID, transformedFeeRate],
     );
 
     return tx;
@@ -210,16 +218,18 @@ export class Platform {
  * Updates the fee rate for validated proposals
  * 
  * @param {number} value - The new fee rate as a percentage ( if you want to set the fees to 5%, pass in 5).
+ * @param {number} platformId - The platform ID where fee rate is updated. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async updateOriginValidatedProposalFeeRate(value: number): Promise<Hash> {
+  public async updateOriginValidatedProposalFeeRate(value: number, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const transformedFeeRate = Math.round((Number(value) * FEE_RATE_DIVIDER) / 100);
 
-    this.logger.debug('SDK: transformedFeeRate', transformedFeeRate, this.platformID);
+    this.logger.debug('SDK: transformedFeeRate', transformedFeeRate, platformID);
     const tx = await this.wallet.writeContract(
       'talentLayerPlatformId',
       'updateOriginValidatedProposalFeeRate',
-      [this.platformID, transformedFeeRate],
+      [platformID, transformedFeeRate],
     );
 
     return tx;
@@ -229,14 +239,15 @@ export class Platform {
  * Updates the posting fee for services on the platform.
  * 
  * @param {number} value - The new fee rate.
+ * @param {number} platformId - The platform ID where the posting fee is updated. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async updateServicePostingFee(value: number): Promise<Hash> {
+  public async updateServicePostingFee(value: number, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const transformedFeeRate = parseEther(value.toString());
-
-    this.logger.debug(`updating service posting fee rate for platform id: ${this.platformID} to ${transformedFeeRate}`);
+    this.logger.debug(`updating service posting fee rate for platform id: ${platformID} to ${transformedFeeRate}`);
     const tx = await this.wallet.writeContract('talentLayerPlatformId', 'updateServicePostingFee', [
-      this.platformID,
+      platformID,
       transformedFeeRate,
     ]);
 
@@ -247,16 +258,18 @@ export class Platform {
  * Updates the posting fee for proposals on the platform.
  * 
  * @param {number} value - The new fee rate.
+ * @param {number} platformId - The platform ID where the posting fee is updated. (optional)
  * @returns {Promise<Hash>} A promise that resolves to the transaction hash of the update operation.
  */
-  public async updateProposalPostingFee(value: number): Promise<Hash> {
+  public async updateProposalPostingFee(value: number, platformId?: number): Promise<Hash> {
+    const platformID = platformId || this.platformID;
     const transformedFeeRate = parseEther(value.toString());
-    this.logger.debug(`updating proposal posting fee rate for platform id: ${this.platformID} to ${transformedFeeRate}`);
+    this.logger.debug(`updating proposal posting fee rate for platform id: ${platformID} to ${transformedFeeRate}`);
 
     const tx = await this.wallet.writeContract(
       'talentLayerPlatformId',
       'updateProposalPostingFee',
-      [this.platformID, transformedFeeRate],
+      [platformID, transformedFeeRate],
     );
 
     return tx;
