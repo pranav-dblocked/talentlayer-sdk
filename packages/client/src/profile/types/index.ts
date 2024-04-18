@@ -16,6 +16,7 @@ export interface IProfile {
   getByAddress(address: `0x${string}`): Promise<any>;
   getById(userId: string): Promise<any>;
   create(handle: string, platformId?: number): Promise<any>;
+  createForAddress(handle: string, userAddress: `0x${string}`, platformId: number, handlePrice: string): Promise<any>;
   update(profileData: TalentLayerProfile, userId: string): Promise<ClientTransactionResponse>;
   getBy(params: {
     numberPerPage?: number;
