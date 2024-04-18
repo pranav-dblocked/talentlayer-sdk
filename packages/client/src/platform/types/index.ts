@@ -23,6 +23,7 @@ export interface IPlatform {
   updateProposalPostingFee(value: number, PlatformId?: number): Promise<TransactionHash>;
   getByOwner(address: `0x${string}`): Promise<any>;
   mint(platformName: string): Promise<TransactionHash>;
+  mintForAddress(platformName: string, address: string, mintFee: any): Promise<TransactionHash>;
   setFeeTimeout(timeout: number, platformId?: number): Promise<TransactionHash>;
   getArbitrators(chainId: NetworkEnum): Arbitrator[];
   updateArbitrator(address: `0x${string}`, platformId?: number): Promise<TransactionHash>;
