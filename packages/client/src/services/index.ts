@@ -1,3 +1,4 @@
+import { Hash } from 'viem';
 import GraphQLClient from '../graphql';
 import IPFSClient from '../ipfs';
 import { Logger } from '../logger';
@@ -27,6 +28,7 @@ export interface IService {
   updloadServiceDataToIpfs(serviceData: ServiceDetails): Promise<string>;
   getServices(params: IProps): Promise<any>;
   search(params: IProps): Promise<any>;
+  cancel(userId: string, serviceId: number): Promise<Hash>;
 }
 
 /**
@@ -168,14 +170,14 @@ export class Service {
     serviceDetails: ServiceDetails,
     userId: string,
     existingServiceId: number,
-  ): Promise<ClientTransactionResponse> {   
+  ): Promise<ClientTransactionResponse> {
 
     const cid = await this.updloadServiceDataToIpfs(serviceDetails);
 
     const tx = await this.viemClient.writeContract(
       'talentLayerService',
       'updateServiceData',
-      [userId, existingServiceId, cid], 
+      [userId, existingServiceId, cid],
     );
 
     if (cid && tx) {
@@ -183,5 +185,28 @@ export class Service {
     }
 
     throw new Error('Unable to update service');
+  }
+
+  /**
+   * Cancel an existing service.
+   * @param {string} userId - Id of the user cancelling the service
+   * @param {number} serviceId - Id of the service being updated
+   * @returns {Promise<Hash>} - A promise that resolves to the transaction hash for the cancelService function call
+  */
+  public async cancel(
+    userId: string,
+    serviceId: number
+  ): Promise<Hash> {
+    const tx = await this.viemClient.writeContract(
+      'talentLayerService',
+      'cancelService',
+      [userId, serviceId]
+    )
+
+    if (tx) {
+      return tx;
+    }
+
+    throw new Error('Unable to cancel service');
   }
 }

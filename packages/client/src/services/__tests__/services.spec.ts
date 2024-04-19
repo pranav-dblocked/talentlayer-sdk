@@ -68,7 +68,6 @@ describe('Service', () => {
             const serviceDetails = testServiceDetails;
             const userId = testUserId;
             const existingServiceId = testServiceId;
-            
 
             // Act
             const response = await service.update(serviceDetails, userId, parseInt(existingServiceId));
@@ -81,6 +80,27 @@ describe('Service', () => {
                 'updateServiceData',
                 [userId, parseInt(existingServiceId), testIpfsHash]
             );
+        })
+    })
+
+    describe('cancel', () => {
+        it('should cancel an existing service', async () => {
+            // Arrange
+            const userId = testUserId;
+            const serviceId = parseInt(testServiceId);
+
+            // Act
+            const response = await service.cancel(userId, serviceId);
+
+            // Assert
+            expect(response).toEqual(testAddress);
+            expect(mockViemClient.writeContract).toHaveBeenCalledWith(
+                'talentLayerService',
+                'cancelService',
+                [userId, serviceId]
+            );
+
+
         })
     })
 
